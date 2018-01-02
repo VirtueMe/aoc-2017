@@ -96,3 +96,21 @@
     ""
     [coll]
     (find-weight coll (find-root coll)))
+
+  (defn find-correct-weight
+    ""
+    [coll]
+    (let [child (find-root coll)]
+      (loop [children (find-weight coll child) root child diff 0]
+        (let [weights (map #(get % 3) children)]
+          (let [dweights (distinct weights)]
+            (if (= (count dweights) 1)
+              ;; balanced three
+              (- (get root 1) diff)
+              (let [mx (apply max dweights) mn (apply min dweights)]
+                (let [diff (- mx mn)]
+                  (let [index (.indexOf weights mx)]
+                    (let [name (get (get children index) 0)]
+                      (let [child (get-child name coll)]
+                        (recur (find-weight coll child) child diff)
+                        )))))))))))
