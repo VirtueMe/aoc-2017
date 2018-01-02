@@ -60,19 +60,20 @@
 (defn find-max-value
   ""
   [instructions]
-  (loop [list instructions result []]
+  (loop [list instructions result [] allhigh 0]
     (if (empty? list)
       (let [mx (apply max (map #(get % 1) result))]
-        [mx result])
+        [mx allhigh])
       (let [instruction (first list)]
         ;; (println "1: " instruction)
         (let [testreg (get instruction 4) testop (get instruction 5) testvalue (Integer. (get instruction 6))]
-          ;; (println "2: " testreg testvalue)
-          (let [testitem (get-register result testreg)]
-            (if (test-op testop testitem testvalue)
-              (let [reg (get instruction 0) op (get instruction 1) value (Integer. (get instruction 2))]
+          (let [reg (get instruction 0) op (get instruction 1) value (Integer. (get instruction 2))]
+            ;; (println "2: " testreg testvalue)
+            (let [testitem (get-register result testreg)]
+              (if (test-op testop testitem testvalue)
                 ;; (println reg)
                 (let [item (get-register result reg)]
-                  (recur (rest list) (update-register result (assoc item 1 (do-op op item value))))))
-              (recur (rest list) result)
+                  (let [new-value (do-op op item value)]
+                    (recur (rest list) (update-register result (assoc item 1 new-value)) (max allhigh testvalue value new-value))))
+                (recur (rest list) result (max allhigh testvalue value)))
             )))))))
