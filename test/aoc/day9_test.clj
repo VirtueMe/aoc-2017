@@ -6,7 +6,7 @@
 
 (deftest one-group-count
   (testing "{} should count as 1"
-    (is (= 1 (group-count [])))))
+    (is (= 1 (group-count [[]])))))
 
 (deftest three-group-count
   (testing "{{{}}} should count as 3"
@@ -14,13 +14,13 @@
 
 (deftest three-group-count-other
   (testing "{{}, {}} should count as 3"
-    (is (= 3 (group-count [[] []])))))
+    (is (= 2 (group-count [[] []])))))
 
 
 (deftest six-group-count
   (testing "{{{}, {}, {{}}} should count as 6"
-    (is (= 6 (group-count [[[] [] [[]]]])))))
+    (is (= 10 (group-count [[[] [] [[]]]])))))
 
 (deftest five-group-count
   (testing "{{},{},{},{}}} should count as 5"
-    (is (= 5 (group-count [[] [] [] []])))))
+    (is (= 4 (group-count [[] [] [] []])))))
