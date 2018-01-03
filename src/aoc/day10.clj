@@ -21,6 +21,7 @@
 (def test-input2 (create-lengths "1,2,4"))
 (def ascii-inputs (create-lengths byteinputs))
 
+
 (defn do-hash
   ""
   [stream pos len]
@@ -44,27 +45,27 @@
       (let [len (first re-inputs)]
         ;; do-something with the stream
         ;; (println "- " position " : " len " : " skip)
-        (let [result (do-hash re-stream pos len)]
+        (let [result (do-hash re-stream (mod pos (count stream)) len)]
           ;; (println ":: " result)
           ;(println (count re-inputs) ": " position " + " len " -> " (count (distinct result)))
-          (recur result (rest re-inputs) (mod (+ pos len skip) (count stream)) (inc skip)))
-        ))))
+          (recur result (rest re-inputs) (+ pos len skip) (mod (inc skip) (count stream))))))
+        ))
 
 (defn elves-hash
   ""
   [stream inputs & [n]]
-  (loop [pos 0 skip 0 result nil n (if (nil? n) 1 n)]
+  (loop [pos 0 skip 0 result stream n (if (nil? n) 1 n)]
     (if (= n 0)
       result
-      (let [res (elves-hash-repeated stream inputs pos skip)]
-        (println res)
+      (let [res (elves-hash-repeated result inputs pos skip)]
+        (println (get res :stream))
         (recur (get res :pos) (get res :skip) (get res :stream) (dec n))
         ))))
 
 (defn dense-hash
   ""
   [stream]
-  (loop [stream stream result nil]
+  (loop [stream stream result []]
     (if (empty? stream)
       result
       (recur (drop 16 stream) (conj result (apply bit-xor (take 16 stream)))))))
@@ -72,6 +73,6 @@
 (defn hex-notation
   ""
   [stream]
-  (apply str (map #(format "%x" %) (take 16 stream))))
+  (apply str (map #(format "%02x" %) (take 16 stream))))
 
 (def puzzle10-part1 (apply * (take 2 (elves-hash puzzle10 inputs))))
