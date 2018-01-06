@@ -58,7 +58,7 @@
     (if (= n 0)
       result
       (let [res (elves-hash-repeated result inputs pos skip)]
-        (println (get res :stream))
+        ;(println (get res :stream))
         (recur (get res :pos) (get res :skip) (get res :stream) (dec n))
         ))))
 
@@ -73,6 +73,19 @@
 (defn hex-notation
   ""
   [stream]
-  (apply str (map #(format "%02x" %) (take 16 stream))))
+  (map #(format "%02x" %) (take 16 stream)))
 
-(def puzzle10-part1 (apply * (take 2 (elves-hash puzzle10 inputs))))
+(defn create-hex
+  ""
+  [key]
+  (hex-notation (dense-hash (elves-hash puzzle10 key 64))))
+
+(defn puzzle10-part1
+  ""
+  []
+  (apply * (take 2 (elves-hash puzzle10 inputs))))
+
+(defn puzzle10-part2
+  ""
+  []
+  (apply str (create-hex ascii-inputs)))
