@@ -61,16 +61,18 @@
     [list & [exitonhit]]
     (loop [list list walker 0 result []]
       (if (empty? list)
-        result
+        (let [success true]
+          (println "last: " success)
+          (if (true? exitonhit) nil result))
         (let [el (first list)]
           ;; (println el)
           (let [hit (on-walker el walker)]
             (let [moved (map move-range list)]
             (if (nil? hit)
-              (recur moved (inc walker) result)
-              (if (hit :caught)
-                nil
-                (recur (rest moved) (inc walker) (if (false? (hit :caught)) result (conj result hit)))
+              (recur (vec moved) (inc walker) result)
+              (if (and (hit :caught) (or exitonhit false))
+                hit
+                (recur (vec (rest moved)) (inc walker) (if (false? (hit :caught)) result (conj result hit)))
                   ))))))))
 
     (defn calc-severity
@@ -84,12 +86,19 @@
   ""
   [list]
   (loop [step 0 list list]
-    (let [result (if (> step 2301) nil (walk-through list true))]
-      ;; (println step)
-      (if (not (nil? result))
+    (let [result (walk-through list true)]
+      (println step (if (nil? result) " success " (result :id)))
+      (if (nil? result)
         step
         (recur (inc step) (map move-range list))
     ))))
 
-(def puzzle13-part1 (calc-severity (walk-through puzzle13)))
-;; (def puzzle13-part2 (wait-for-it puzzle13))
+(defn puzzle13-part1
+  ""
+  []
+  (calc-severity (walk-through puzzle13)))
+
+(defn puzzle13-part2
+  ""
+  []
+  (wait-for-it puzzle13))

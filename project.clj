@@ -6,4 +6,5 @@
   :dependencies [[org.clojure/clojure "1.9.0"] [org.clojure/core.match "0.3.0-alpha5"]]
   :main ^:skip-aot aoc.core
   :target-path "target/%s"
+  :jvm-opts ["-Xmx1G"]
   :profiles {:uberjar {:aot :all}})
